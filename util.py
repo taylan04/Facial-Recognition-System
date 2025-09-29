@@ -3,8 +3,12 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime
+from dotenv import load_dotenv
+import os
 import cv2
 import sqlite3
+
+load_dotenv()
 
 def opcao():
     """
@@ -32,8 +36,8 @@ def enviar_email(email, nome):
     """
     smtp_server ="smtp.gmail.com"
     smtp_port = 587
-    email_usuario = "taylan.gonzaga@al.infnet.edu.br"
-    email_senha = "ikhx mbjj wswl szej"
+    email_usuario = str(os.getenv("EMAIL_SISTEMA"))
+    email_senha = str(os.getenv("EMAIL_SENHA"))
     data = datetime.now()
     hora = data.strftime('%H:%M')
 
