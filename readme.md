@@ -13,8 +13,8 @@ Academic project developed in Python during college programming classes, under t
 
 1. **Clone the repository**  
 ```bash
-   git clone <your-repo-url>
-   cd <your-repo-folder>
+   git clone https://github.com/taylan04/Facial-Recognition-System.git
+   cd Facial-Recognition-System
 ```
 
 2. **Install dependencies**
@@ -50,8 +50,8 @@ Projeto acadêmico desenvolvido em Python durante as aulas de programação da f
 
 1. **Clone o repositório**  
 ```bash
-    git clone <url-do-seu-repo>
-    cd <pasta-do-repo>
+    git clone https://github.com/taylan04/Facial-Recognition-System.git
+    cd Facial-Recognition-System
 ```
 
 2. **Instale as dependências**
