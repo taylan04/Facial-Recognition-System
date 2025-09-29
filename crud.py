@@ -4,7 +4,7 @@ from util import *
 from menu import menu
 import cv2
 
-#SCA - Sistema de Controle de Acesso
+# SCA - Sistema de Controle de Acesso
 
 conexao = sqlite3.connect("sa.db")
 cursor = conexao.cursor()
@@ -13,8 +13,20 @@ if not camera.isOpened():
         print("Erro ao abrir a câmera!")
         exit()
 
-
 def cadastrar_usuario():
+    """
+    cadastra um novo usuário no banco de dados solicitando informações pessoais
+    e capturando uma foto pela câmera.
+
+    fluxo:
+        - solicita cpf, nome e código do cartão
+        - abre a câmera e salva a foto ao pressionar 'g'
+        - solicita e-mail e telefone
+        - insere os dados na tabela 'usuarios'
+
+    returns:
+        None
+    """
     cpf = input("informe seu CPF: ")
     nome = input("Informe seu nome: ")
     cartao = input("Informe o código do seu cartão: ")
@@ -26,7 +38,7 @@ def cadastrar_usuario():
             break
 
         cv2.imshow('Camera', frame)
-        tecla = cv2.waitKey(1)# & 0xFF
+        tecla = cv2.waitKey(1)  # & 0xFF
         if tecla == ord('g'):
             nome_arquivo = f"{cpf}.png"
             cv2.imwrite(nome_arquivo, frame)
@@ -49,8 +61,17 @@ def cadastrar_usuario():
         print("Erro ao inserir!")
 
 def buscar():
+    """
+    busca um usuário no banco de dados pelo cpf informado.
+
+    - exibe dados cadastrais e mostra a foto do usuário (se disponível).
+    - dá as boas-vindas com mensagem de voz de acordo com o horário do dia.
+
+    returns:
+        None
+    """
     cpf = input("\nInforme seu CPF: ")
-    cursor.execute("SELECT * FROM usuarios WHERE cpf = ?",(cpf,))
+    cursor.execute("SELECT * FROM usuarios WHERE cpf = ?", (cpf,))
     resultado = cursor.fetchone()
     hora = datetime.now().hour
     if resultado:
@@ -72,7 +93,20 @@ def buscar():
             print("CPF não encontrado!")
 
 def buscar_cartao(cartao):
-    cursor.execute("SELECT * FROM usuarios WHERE cartao = ?",(cartao,))
+    """
+    busca um usuário no banco de dados pelo número do cartão.
+
+    - exibe dados cadastrais e mostra a foto do usuário (se disponível).
+    - envia e-mail de registro de comparecimento.
+    - dá as boas-vindas com mensagem de voz de acordo com o horário do dia.
+
+    args:
+        cartao (str): código do cartão do usuário.
+
+    returns:
+        None
+    """
+    cursor.execute("SELECT * FROM usuarios WHERE cartao = ?", (cartao,))
     resultado = cursor.fetchone()
     hora = datetime.now().hour
     if resultado:
@@ -95,6 +129,13 @@ def buscar_cartao(cartao):
         print("Cartão não encontrado na base de dados!")
 
 def listar_usuarios():
+    """
+    lista todos os usuários cadastrados no banco de dados,
+    exibindo cpf, nome, cartão, e-mail e telefone.
+
+    returns:
+        None
+    """
     cursor.execute("SELECT * FROM usuarios")
     resultado = cursor.fetchall()
     if resultado:
@@ -102,31 +143,50 @@ def listar_usuarios():
             print(f"\nCPF: {usuario[0]} - Nome: {usuario[1]} | Cartao: {usuario[2]} | Email: {usuario[4]} | Telefone: {usuario[5]}")
 
 def excluir():
+    """
+    exclui um usuário do banco de dados pelo cpf informado.
+
+    - solicita confirmação antes da exclusão.
+    - informa o resultado da operação.
+
+    returns:
+        None
+    """
     cpf = input("Digite seu CPF: ")
-    cursor.execute("SELECT * FROM usuarios WHERE CPF = ?",(cpf,))
+    cursor.execute("SELECT * FROM usuarios WHERE CPF = ?", (cpf,))
     resultado = cursor.fetchone()
     if resultado:
         confirmacao = input("\nDeseja mesmo excluir (SIM/NAO) ?: ")
         if confirmacao.lower() == "sim":
-            cursor.execute("DELETE FROM usuarios WHERE CPF = ?",(cpf,))
+            cursor.execute("DELETE FROM usuarios WHERE CPF = ?", (cpf,))
             sistema_voz("Usuário deletado!")
             print("\nSeu usuário foi deletado!")
         else:
             print("\nOperação cancelada!")
 
 def atualizar_usuario():
+    """
+    atualiza os dados de um usuário já cadastrado.
+
+    - solicita cpf para localizar o usuário
+    - permite alterar nome, cartão, e-mail e telefone
+    - caso o campo seja deixado em branco, mantém o valor atual
+
+    returns:
+        None
+    """
     print("\n--- Atualização Cadastral ---")
     cpf = input("Digite seu CPF: ")
     cursor.execute("SELECT * FROM usuarios WHERE cpf = ?", (cpf,))
     resultado = cursor.fetchone()
     if resultado:
         print("\nAperte ENTER para não mudar o campo apresentado")
-        novo_nome=input(f"Nome [{resultado[1]}] / Novo nome: ").strip()
-        novo_cartao=input(f"Cartão [{resultado[2]}] / Novo cartão: ").strip()
-        novo_email=input(f"Email [{resultado[4]}] / Novo email: ").strip()
-        novo_tel=input(f"Telefone [{resultado[5]}] / Novo telefone: ").strip()
+        novo_nome = input(f"Nome [{resultado[1]}] / Novo nome: ").strip()
+        novo_cartao = input(f"Cartão [{resultado[2]}] / Novo cartão: ").strip()
+        novo_email = input(f"Email [{resultado[4]}] / Novo email: ").strip()
+        novo_tel = input(f"Telefone [{resultado[5]}] / Novo telefone: ").strip()
 
-        if not novo_email:
+        if not novo_nome:
             novo_nome = resultado[1]
         if not novo_cartao:
             novo_cartao = resultado[2]
@@ -135,7 +195,10 @@ def atualizar_usuario():
         if not novo_tel:
             novo_tel = resultado[5]
         
-        cursor.execute("UPDATE usuarios SET nome=?, cartao=?, email=?, telefone=? WHERE cpf = ?", (novo_nome, novo_cartao, novo_email, novo_tel, cpf))
+        cursor.execute(
+            "UPDATE usuarios SET nome=?, cartao=?, email=?, telefone=? WHERE cpf = ?",
+            (novo_nome, novo_cartao, novo_email, novo_tel, cpf)
+        )
         conexao.commit()
         print("\nAtualização cadastral obteve sucesso!")
     else:

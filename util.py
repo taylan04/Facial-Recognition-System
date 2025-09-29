@@ -7,6 +7,12 @@ import cv2
 import sqlite3
 
 def opcao():
+    """
+    solicita ao usuário a escolha de uma opção no terminal.
+
+    returns:
+        opcao (int): número inteiro correspondente à opção escolhida pelo usuário.
+    """
     try:
         opcao = int(input("Escolha uma opção: "))
         return opcao
@@ -14,6 +20,16 @@ def opcao():
         print(f"Escolha inválida! Erro: {e}")
 
 def enviar_email(email, nome):
+    """
+    envia um e-mail de registro de comparecimento para o destinatário.
+
+    args:
+        email (str): endereço de e-mail do destinatário.
+        nome (str): nome do destinatário que será exibido na mensagem.
+
+    returns:
+        None
+    """
     smtp_server ="smtp.gmail.com"
     smtp_port = 587
     email_usuario = "taylan.gonzaga@al.infnet.edu.br"
@@ -43,6 +59,15 @@ def enviar_email(email, nome):
         print(f"Erro: {e}")
 
 def sistema_voz(mensagem):
+    """
+    utiliza o mecanismo de voz do windows para falar uma mensagem em áudio.
+
+    args:
+        mensagem (str): texto a ser convertido em fala.
+
+    returns:
+        None
+    """
     speaker = win32com.client.Dispatch("SAPI.SpVoice")
 
     for i, voice in enumerate(speaker.GetVoices()):
@@ -56,6 +81,15 @@ def sistema_voz(mensagem):
     speaker.Speak(texto)
 
 def sistema_facial():
+    """
+    ativa a câmera do computador para captura de imagens faciais.
+
+    - pressione 'g' para salvar uma foto.
+    - pressione 'q' para encerrar a captura.
+
+    returns:
+        None
+    """
     cap = cv2.VideoCapture(0)
 
     if not cap.isOpened():
@@ -89,6 +123,12 @@ def sistema_facial():
     cv2.destroyAllWindows()
 
 def init():
+    """
+    inicializa o banco de dados sqlite, criando a tabela 'usuarios' caso não exista.
+
+    returns:
+        None
+    """
     conexao = sqlite3.connect("sa.db")
     cursor = conexao.cursor()
     cursor.execute('''

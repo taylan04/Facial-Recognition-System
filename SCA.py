@@ -3,6 +3,13 @@ from menu import menu
 from crud import *
 
 def operacao():
+    """
+    executa o loop principal do sistema, exibindo o menu e chamando as operações
+    correspondentes com base na opção escolhida pelo usuário.
+
+    returns:
+        None
+    """
     while True:
         menu()
         n = opcao()
