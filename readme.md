@@ -68,7 +68,7 @@ Projeto acadêmico desenvolvido em Python durante as aulas de programação da f
     EMAIL_SENHA=seu_app_senha
 ```
 
-4. **Run the program**
+4. **Rode o programa**
 ```bash
     python SCA.py
 ```
